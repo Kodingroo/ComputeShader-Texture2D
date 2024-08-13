@@ -1,0 +1,77 @@
+#include "/Engine/Public/Platform.ush"
+
+Texture2D InputTexture : register(t0);
+SamplerState InputSampler : register(s0);
+
+RWTexture2D<float4> RenderTarget;  // The output render target where the processed image will be written
+
+// Boolean parameters, represented as uints, for inverting colors and applying grayscale
+uint bInvertColors : register(b0);
+uint bGreyscale : register(b1);
+
+// Float parameters for controlling distortion strength, image scale, rotation, and contrast
+float DistortionStrength : register(b2);
+float ImageScale : register(b3);
+float RotationAngle : register(b4);  // Image rotation angle in degrees
+float Contrast : register(b5);
+
+[numthreads(THREADS_X, THREADS_Y, THREADS_Z)]
+void Main(
+    uint3 DispatchThreadId : SV_DispatchThreadID,
+    uint GroupIndex : SV_GroupIndex)
+{
+    uint RenderTargetWidth, RenderTargetHeight;
+    RenderTarget.GetDimensions(RenderTargetWidth, RenderTargetHeight);
+
+    // Calculate the UV coordinates
+    float2 UV = float2(DispatchThreadId.x / float(RenderTargetWidth), DispatchThreadId.y / float(RenderTargetHeight));
+
+    // Translate UV to center for rotation
+    UV = UV - 0.5;
+
+    // Convert the rotation angle from degrees to radians
+    float RotationRadians = radians(RotationAngle);
+
+    // Calculate the sine and cosine of the rotation angle
+    float CosAngle = cos(RotationRadians);
+    float SinAngle = sin(RotationRadians);
+
+    // Apply rotation
+    float2 RotatedUV = float2(
+        CosAngle * UV.x - SinAngle * UV.y,
+        SinAngle * UV.x + CosAngle * UV.y
+    );
+
+    // Translate UV back after rotation
+    RotatedUV = RotatedUV + 0.5;
+
+    // Apply image scaling
+    RotatedUV = (RotatedUV - 0.5) / ImageScale + 0.5;
+
+    // Apply distortion to the UV coordinates
+    float2 DistortedUV = RotatedUV + DistortionStrength * float2(sin(RotatedUV.y * 10.0), sin(RotatedUV.x * 10.0));
+
+    // Sample the color from the input texture using the distorted UVs
+    float4 InputColor = InputTexture.Sample(InputSampler, DistortedUV);
+
+    // Apply grayscale if the boolean parameter is true
+    if (bGreyscale != 0)
+    {
+        // Convert the color to grayscale by averaging the RGB values
+        float Grey = dot(InputColor.rgb, float3(0.3, 0.6, 0.1));
+        InputColor.rgb = float3(Grey, Grey, Grey);
+    }
+
+    // Adjust contrast
+    // Shift to range [-0.5, 0.5], apply contrast scaling, then shift back to [0, 1]
+    InputColor.rgb = (InputColor.rgb - 0.5) * Contrast + 0.5;
+
+    // Invert colors if the boolean parameter is true
+    if (bInvertColors != 0)
+    {
+        InputColor.rgb = 1.0 - InputColor.rgb;
+    }
+
+    // Write the output color to the render target
+    RenderTarget[DispatchThreadId.xy] = InputColor;
+}
