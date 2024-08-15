@@ -9,6 +9,8 @@
  * Includes checkboxes and sliders for modifying color and deformation effects.
  */
 
+class UWriteToRenderTarget;
+
 UCLASS()
 class COMPUTESHADERMODULEEDITOR_API UShaderModWidget : public UEditorUtilityWidget
 {
@@ -61,5 +63,9 @@ protected:
 	void OnResetClicked();
 
 private:
-	void ResetShaderParameters(); 
+	void ResetShaderParameters();
+	void CheckWriteToRenderTargetInstance();
+
+	UPROPERTY()
+	UWriteToRenderTarget* WriteToRenderTargetInstance;
 };
