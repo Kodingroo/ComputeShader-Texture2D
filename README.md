@@ -14,7 +14,6 @@ The compute shader leverages the GPU's parallel processing capabilities to execu
    - [Blueprint Integration](#blueprint-integration)
 2. [Key Classes and Structures](#key-classes-and-structures)
    - [FWriteToRenderTargetDispatchParams](#fwritetorendertargetdispatchparams)
-   - [FWriteToRenderTargetInterface](#fwritetorendertargetinterface)
    - [UWriteToRenderTargetLibrary](#uwritetorendertargetlibrary)
 3. [Shader Details](#shader-details)
    - [Shader Code Breakdown](#shader-code-breakdown)
