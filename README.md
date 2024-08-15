@@ -61,10 +61,6 @@ The goal was to provide a user-friendly interface that allows designers and deve
 
 `FWriteToRenderTargetDispatchParams` defines the dimensions (X, Y, Z) for the shader execution and holds a reference to the render target. This struct is essential for setting up the shader environment and ensuring proper execution on the GPU and render thread.
 
-### FWriteToRenderTargetInterface
-
-`FWriteToRenderTargetInterface` provides a public interface for executing compute shaders within the Unreal Engine framework. It manages the interaction between the game thread and render thread, ensuring correct shader execution on the GPU. The class handles tasks like shader dispatch, resource initialization, and texture resizing, making it essential for GPU-based operations.
-
 ### UWriteToRenderTargetLibrary
 
 `UWriteToRenderTargetLibrary` provides a Blueprint-accessible way to invoke the compute shader. This class simplifies the process of setting up and dispatching the shader by encapsulating the necessary steps within a single function call, `ExecuteRTComputeShader`. This approach allows designers and developers to utilize the shader in both the Unreal Editor and at runtime without requiring deep C++ knowledge.
