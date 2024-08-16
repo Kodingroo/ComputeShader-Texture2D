@@ -15,6 +15,9 @@ The compute shader leverages the GPU's parallel processing capabilities to execu
 2. [Key Classes and Structures](#key-classes-and-structures)
    - [FWriteToRenderTargetDispatchParams](#fwritetorendertargetdispatchparams)
    - [UWriteToRenderTargetLibrary](#uwritetorendertargetlibrary)
+   - [FWriteToRenderTarget](#fwritetorendertarget)
+   - [UWriteToRenderTarget](#uwritetorendertarget)
+   - [ShaderModWidget](#shadermodwidget)
 3. [Shader Details](#shader-details)
    - [Shader Code Breakdown](#shader-code-breakdown)
    - [Usage](#usage)
@@ -57,12 +60,20 @@ The goal was to provide a user-friendly interface that allows designers and deve
 ## 2. Key Classes and Structures
 
 ### FWriteToRenderTargetDispatchParams
-
 `FWriteToRenderTargetDispatchParams` defines the dimensions (X, Y, Z) for the shader execution and holds a reference to the render target. This struct is essential for setting up the shader environment and ensuring proper execution on the GPU and render thread.
 
 ### UWriteToRenderTargetLibrary
-
 `UWriteToRenderTargetLibrary` provides a Blueprint-accessible way to invoke the compute shader. This class simplifies the process of setting up and dispatching the shader by encapsulating the necessary steps within a single function call, `ExecuteRTComputeShader`. This approach allows designers and developers to utilize the shader in both the Unreal Editor and at runtime without requiring deep C++ knowledge.
+
+### FWriteToRenderTarget
+`FWriteToRenderTarget` represents the global shader used to write to a render target, handling the execution of the shader on the render thread. This class manages the dispatch of the compute shader with appropriate parameters, configures shader resources such as texture inputs, and integrates with Unreal Engine’s rendering pipeline. It is crucial for ensuring the custom shader operates correctly within the engine’s framework.
+
+### UWriteToRenderTarget
+`UWriteToRenderTarget` serves as the primary interface for executing the compute shader. It is responsible for initializing and dispatching the shader on either the game or render thread, managing shader parameters such as color inversion, grayscale, and rotation, and handling texture resizing. This class ensures the correct execution environment for the shader and provides both C++ and Blueprint access, making it the main control point for shader operations.
+
+### ShaderModWidget
+`ShaderModWidget` is an editor utility widget that provides a user interface for controlling the shader's parameters. This widget allows developers to interact with shader settings directly within the Unreal Editor, offering real-time adjustments to parameters like rotation, contrast, and distortion via sliders, checkboxes, and other UI elements. By making shader manipulation accessible without the need for code, this class enhances the plugin's usability, especially for designers.
+
 
 ## 3. Shader Details
 
