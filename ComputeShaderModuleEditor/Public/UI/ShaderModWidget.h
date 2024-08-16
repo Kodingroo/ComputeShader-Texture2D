@@ -64,7 +64,7 @@ protected:
 
 private:
 	void ResetShaderParameters();
-	void CheckWriteToRenderTargetInstance();
+	bool CheckWriteToRenderTargetInstance();
 
 	UPROPERTY()
 	UWriteToRenderTarget* WriteToRenderTargetInstance;

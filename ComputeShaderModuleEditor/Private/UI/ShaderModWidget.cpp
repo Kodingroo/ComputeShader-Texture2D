@@ -47,44 +47,50 @@ void UShaderModWidget::NativeConstruct()
 
 void UShaderModWidget::OnInvertColorsChanged(bool bIsChecked)
 {
-    if (!WriteToRenderTargetInstance) { CheckWriteToRenderTargetInstance(); }
-    
-    WriteToRenderTargetInstance->SetInvertColors(bIsChecked);
+    if (CheckWriteToRenderTargetInstance())
+    {
+        WriteToRenderTargetInstance->SetInvertColors(bIsChecked);
+    }
 }
 
 void UShaderModWidget::OnGrayscaleChanged(bool bIsChecked)
 {
-    if (!WriteToRenderTargetInstance) { CheckWriteToRenderTargetInstance(); }
-
-    WriteToRenderTargetInstance->SetGreyscale(bIsChecked);
+    if (CheckWriteToRenderTargetInstance())
+    {
+        WriteToRenderTargetInstance->SetGreyscale(bIsChecked);
+    }
 }
 
 void UShaderModWidget::OnContrastChanged(float Value)
 {
-    if (!WriteToRenderTargetInstance) { CheckWriteToRenderTargetInstance(); }
-
-    WriteToRenderTargetInstance->SetContrast(Value);
+    if (CheckWriteToRenderTargetInstance())
+    {
+        WriteToRenderTargetInstance->SetContrast(Value);
+    }
 }
 
 void UShaderModWidget::OnDistortionChanged(float Value)
 {
-    if (!WriteToRenderTargetInstance) { CheckWriteToRenderTargetInstance(); }
-
-    WriteToRenderTargetInstance->SetDistortionStrength(Value);
+    if (CheckWriteToRenderTargetInstance())
+    {
+        WriteToRenderTargetInstance->SetDistortionStrength(Value);
+    }
 }
 
 void UShaderModWidget::OnScalingChanged(float Value)
 {
-    if (!WriteToRenderTargetInstance) { CheckWriteToRenderTargetInstance(); }
-
-    WriteToRenderTargetInstance->SetImageScale(Value);
+    if (CheckWriteToRenderTargetInstance())
+    {
+        WriteToRenderTargetInstance->SetImageScale(Value);
+    }
 }
 
 void UShaderModWidget::OnRotationChanged(float Value)
 {
-    if (!WriteToRenderTargetInstance) { CheckWriteToRenderTargetInstance(); }
-
-    WriteToRenderTargetInstance->SetRotationAngle(Value);
+    if (CheckWriteToRenderTargetInstance())
+    {
+        WriteToRenderTargetInstance->SetRotationAngle(Value);
+    }
 }
 
 void UShaderModWidget::OnResetClicked()
@@ -110,10 +116,16 @@ void UShaderModWidget::ResetShaderParameters()
     OnRotationChanged(90.0f);
 }
 
-void UShaderModWidget::CheckWriteToRenderTargetInstance()
+bool UShaderModWidget::CheckWriteToRenderTargetInstance()
 {
-    if (UWriteToRenderTarget* ActiveInstance = UWriteToRenderTargetLibrary::WriteToRenderTargetInstance)
+    if (!WriteToRenderTargetInstance)
     {
-        WriteToRenderTargetInstance = ActiveInstance;
+        WriteToRenderTargetInstance = UWriteToRenderTargetLibrary::WriteToRenderTargetInstance;
+        if (!WriteToRenderTargetInstance)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("WriteToRenderTargetInstance is null. Shader operations cannot be performed."));
+            return false;
+        }
     }
+    return true;
 }
